@@ -35,12 +35,18 @@ namespace RimWorldUpscaler.EditorTools
                     (x, y) => Corner(x >= 15, y >= 9),
                     pixels => CheckCorners(pixels, 47, 29), null);
 
+                // Exercise the same 32:9 aspect ratio as a 5120 x 1440
+                // display without making validation allocate full-size readbacks.
+                Execute(material, 213, 60, 320, 90,
+                    (x, y) => Corner(x >= 106, y >= 30),
+                    pixels => CheckCorners(pixels, 320, 90), null);
+
                 Execute(material, 63, 47, 96, 72,
                     (x, y) => new Color(x / 62f, y / 46f,
                         ((x / 5 + y / 7) % 2 == 0) ? 0.25f : 0.7f, 1f),
                     pixels => { }, Path.Combine(outputDirectory, "fsr-shader-validation"));
                 BuildShaders.ThrowIfShaderErrors(shader);
-                return "Passed: both passes, black/gray/white preservation, finite colors, all edges, orientation, odd dimensions and gradient/checker pattern (D3D11)";
+                return "Passed: both passes, black/gray/white preservation, finite colors, all edges, orientation, odd dimensions, 32:9 ultrawide and gradient/checker pattern (D3D11)";
             }
             finally
             {

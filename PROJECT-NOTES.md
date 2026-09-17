@@ -24,17 +24,17 @@ RimWorld loads files in AssetBundles itself. The runtime reuses its loaded bundl
 
 FSR is implemented with fragment shaders around AMD's original MIT headers. The user's existing -disable-compute-shaders launch option is not changed.
 
-## Build status and blocker
+## Build and validation status
 
-The C# runtime compiles cleanly, and both actual FSR fragment programs compile as Shader Model 5.0 without warnings. These are compilation checks, not evidence of a rendered image or performance improvement.
+The C# runtime compiles cleanly, and both actual FSR fragment programs compile as Shader Model 5.0 without warnings. The GPU suite also exercises both passes, including odd sizes and a 32:9 ultrawide case. These checks do not establish in-game performance improvement.
 
 Unity 2022.3.35f1 is installed at .tools/UnityEditor-2022.3.35f1. With normal desktop access, the active Personal license was detected. Both shader passes completed the D3D11 GPU validation suite on the RTX 2070 SUPER, and the Windows-player bundle was created. The editor does not reopen that player-targeted bundle; RimWorld remains the authoritative bundle load test.
 
-A separate test profile is at .scratch/TestProfile and a development mod copy is at E:/SteamLibrary/steamapps/common/RimWorld/Mods/RimWorldUpscalerDev. The normal mod list and saves were not edited. Computer-use inspection of the test game timed out awaiting app permission; no gameplay visual pass is recorded.
+A separate test profile is at .scratch/TestProfile. The final local test copy is installed at E:/SteamLibrary/steamapps/common/RimWorld/Mods/RimWorldUpscaler and remains disabled in the normal mod list until the user enables it. No saves were edited. No gameplay visual pass is recorded yet.
 
 ## Next verification
 
-Run scripts/Build-Shaders.ps1 after license activation. It imports the shader, executes EASU/RCAS GPU tests, builds the bundle, reloads it, and validates the bundled shader. Then test native/FSR/bilinear, selection alignment, Camera+ zoom, water, color correction, resizing, map transitions, and enable/disable in the isolated profile.
+Enable the final local copy and test native/FSR/bilinear, selection alignment, Camera+ zoom, water, color correction, resizing, map transitions, and enable/disable behavior. RimWorld is the authoritative Windows-player bundle and camera-integration test.
 
 Compare identical paused views first. Measure frame times at fixed game speed/camera/resolution, include upscaling overhead, repeat runs and report variability. Fewer shaded pixels do not guarantee more FPS. Workshop publication remains pending testing.
 

@@ -126,6 +126,11 @@ namespace RimWorldUpscaler
                 reason = "Native rendering: this preview requires Windows / DirectX 11";
             else if (GraphicsSettings.currentRenderPipeline != null)
                 reason = "Native rendering: unsupported render pipeline";
+            else if (!SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGB32))
+                reason = "Native rendering: required render textures are unsupported";
+            else if (SystemInfo.maxTextureSize > 0 &&
+                (Screen.width > SystemInfo.maxTextureSize || Screen.height > SystemInfo.maxTextureSize))
+                reason = $"Native rendering: {Screen.width} x {Screen.height} exceeds the GPU texture limit";
             else if (Current.ProgramState != ProgramState.Playing || Find.CurrentMap == null ||
                 LongEventHandler.ShouldWaitForEvent)
                 reason = "Native rendering: open a colony map";

@@ -10,7 +10,7 @@ namespace RimWorldUpscaler
         internal static UpscalerMod Instance;
         internal readonly UpscalerSettings Settings;
         private Vector2 scrollPosition;
-        private float settingsHeight = 690f;
+        private float settingsHeight = 790f;
 
         public UpscalerMod(ModContentPack content) : base(content)
         {
@@ -52,6 +52,24 @@ namespace RimWorldUpscaler
             int width = Mathf.Max(1, Mathf.RoundToInt(Screen.width * Settings.RenderScale));
             int height = Mathf.Max(1, Mathf.RoundToInt(Screen.height * Settings.RenderScale));
             listing.Label($"World: {width} x {height}  ->  Display / interface: {Screen.width} x {Screen.height}");
+            listing.Label("Preset render sizes: " +
+                $"Ultra Quality {WidthFor(QualityPreset.UltraQuality)} x {HeightFor(QualityPreset.UltraQuality)} | " +
+                $"Quality {WidthFor(QualityPreset.Quality)} x {HeightFor(QualityPreset.Quality)} | " +
+                $"Balanced {WidthFor(QualityPreset.Balanced)} x {HeightFor(QualityPreset.Balanced)} | " +
+                $"Performance {WidthFor(QualityPreset.Performance)} x {HeightFor(QualityPreset.Performance)}");
+            bool ultrawide = Screen.height > 0 && Screen.width / (float)Screen.height >= 3f;
+            if (ultrawide)
+            {
+                listing.Label("Ultrawide starting point: FSR 1, Quality, 50% sharpening.");
+                if (listing.ButtonText("Apply recommended ultrawide settings"))
+                {
+                    Settings.Filter = UpscaleFilter.Fsr1;
+                    Settings.Quality = QualityPreset.Quality;
+                    Settings.Sharpness = 0.5f;
+                    Settings.ShowOverlay = true;
+                    WriteSettings();
+                }
+            }
             if (Settings.Filter == UpscaleFilter.Fsr1)
             {
                 listing.Label($"Sharpening: {Settings.Sharpness:P0}");
@@ -82,6 +100,12 @@ namespace RimWorldUpscaler
             Settings.Validate();
             base.WriteSettings();
         }
+
+        private static int WidthFor(QualityPreset quality) =>
+            Mathf.Max(1, Mathf.RoundToInt(Screen.width * UpscalerSettings.ScaleFor(quality)));
+
+        private static int HeightFor(QualityPreset quality) =>
+            Mathf.Max(1, Mathf.RoundToInt(Screen.height * UpscalerSettings.ScaleFor(quality)));
 
         internal static string FilterLabel(UpscaleFilter filter) => filter == UpscaleFilter.Fsr1 ? "FSR 1" : "Bilinear";
 

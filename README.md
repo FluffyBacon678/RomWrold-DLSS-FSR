@@ -24,6 +24,19 @@ Start with Quality. Zero sharpening bypasses RCAS. Ctrl+F8 switches to native fo
 
 No data is added to saves. Disable the mod to stop its rendering changes. Keep backups for new-mod testing.
 
+## 5120 x 1440 smoke-test settings
+
+| Preset | Colony render size | Output / interface |
+| --- | ---: | ---: |
+| Ultra Quality | 3938 x 1108 | 5120 x 1440 |
+| Quality | 3413 x 960 | 5120 x 1440 |
+| Balanced | 3012 x 847 | 5120 x 1440 |
+| Performance | 2560 x 720 | 5120 x 1440 |
+
+Start with **FSR 1 / Quality / 50% sharpening / overlay on**. Compare it with native using Ctrl+F8 while paused on the same busy colony view. Try Balanced next if the GPU remains the limit. Ultra Quality is the image-quality comparison; Performance is the stress case for artifacts and UI separation.
+
+For the smoke test, check mouse alignment at all four screen edges, crisp UI text, water and weather, fog, selection outlines, Camera+ zoom, planet/map transitions, and fullscreen/window changes. The overlay should report the low-resolution colony size and the 5120 x 1440 output.
+
 ## Compatibility and safety
 
 - No Harmony dependency, gameplay definitions, simulation patches, or save data.

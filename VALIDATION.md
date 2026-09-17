@@ -8,7 +8,7 @@
 - Compiled both actual fragment programs as Shader Model 5.0 with Windows' D3D compiler. This checks HLSL compilation independently of Unity; it is not a GPU image test.
 - Parsed build/package scripts and mod XML; verified the packaging script refuses to create an FSR release when the shader bundle is missing.
 - Built the Windows player AssetBundle with licensed Unity 2022.3.35f1.
-- Passed GPU shader validation on an RTX 2070 SUPER / DirectX 11 for both shader passes, solid colors, finite output, edges, orientation, odd dimensions, gradients and checker patterns.
+- Passed GPU shader validation on an RTX 2070 SUPER / DirectX 11 for both shader passes, solid colors, finite output, edges, orientation, odd dimensions, a 32:9 ultrawide case, gradients and checker patterns.
 - Added the required About metadata plus a 640x360 preview and 64x64 mod icon; the preview is below Steam's 1 MB limit.
 
 ## Pending
