@@ -46,6 +46,8 @@ For the smoke test, check mouse alignment at all four screen edges, crisp UI tex
 - Does not claim universal compatibility with camera, post-processing, screenshot, or multiplayer rendering mods. Test those combinations before a Workshop stability claim.
 - Declares only RimWorld 1.6 support because that is the version it is compiled against and being tested on.
 
+A local 66-mod Prepatcher test exposed a separate Camera+ 3.4.7 issue: its bundled CrossPromotion 1.1.2 could native-crash the Mods page in `WorkshopItemHook` even while this upscaler was disabled and had not loaded. That stack is a Camera+ promotional-panel failure, not an upscaler rendering failure. Update or repair Camera+ if the crash stack names `Brrainz.CrossPromotion`.
+
 The release folder includes `About/Preview.png` at 640x360, `About/ModIcon.png` at 64x64, a unique package ID, a mod version, supported-version metadata, and third-party license notices.
 
 ## Build

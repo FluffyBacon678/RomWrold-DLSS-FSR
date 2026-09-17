@@ -32,7 +32,13 @@ Unity 2022.3.35f1 is installed at .tools/UnityEditor-2022.3.35f1. With normal de
 
 A separate test profile is at .scratch/TestProfile. RimWorld 1.6.4871 started there at 5120x1440 on DirectX 11 and successfully loaded the bundle, reporting EASU and RCAS ready. A copied save with the user's 67-mod list reached `OnMapLoaded`, but hidden automation hit existing RimHUD/HugsLib/Verse.Text GUI initialization errors before a stable colony frame. No upscaler code appeared in those stacks, and no gameplay visual pass is recorded from that run.
 
-The final local test copy is installed at E:/SteamLibrary/steamapps/common/RimWorld/Mods/RimWorldUpscaler and remains disabled in the normal mod list until the user enables it. The temporary test helper was removed. No original saves or normal mod settings were edited.
+The final local test copy is installed at E:/SteamLibrary/steamapps/common/RimWorld/Mods/RimWorldUpscaler and is now active in the normal mod list by user request. Its rendering setting still defaults to disabled. The temporary test helper was removed, the prior ModsConfig.xml was backed up, and no original saves were edited.
+
+## Camera+ Mods-page crash
+
+The user's complete mod stack reproduced a native crash when the Mods page opened, including when RimWorld Upscaler was merely visible and disabled. The native stack was `Brrainz.CrossPromotion -> Verse.ModMetaData.GetWorkshopItemHook -> Verse.Steam.WorkshopItemHook`; no upscaler assembly or rendering method appeared. Camera+ 3.4.7 bundles CrossPromotion 1.1.2, which adds the promotional panel that makes this call.
+
+The local test environment backs up the original Camera+ CrossPromotion DLL and uses a same-identity no-op shim. This leaves Camera+'s camera features active and disables only its promotional panel. With the shim, the exact full stack opened the Mods page without a native crash; the upscaler-active 5120x1440 variant remained stable for 15 seconds. This workaround is local and is not distributed in the upscaler package. A Steam update to Camera+ may replace it.
 
 ## Next verification
 
