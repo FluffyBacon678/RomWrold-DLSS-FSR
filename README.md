@@ -9,7 +9,6 @@ This is a development preview, not DLSS, temporal FSR, or frame generation. It d
 - Genuine AMD EASU upscaling below native resolution and optional RCAS sharpening.
 - Separate bilinear mode for comparison.
 - Performance presets from 50% to 77%, Native 100%, and 125% / 150% supersampling.
-- A reversible 30-240 FPS limiter with an explicit VSync override.
 - Immediate settings changes; Ctrl+F8 toggles native rendering.
 - Optional status / FPS overlay with actual render dimensions.
 - Defaults to disabled. Unsupported views and camera arrangements use native rendering.
@@ -39,7 +38,7 @@ No data is added to saves. Disable the mod to stop its rendering changes. Keep b
 
 Start with **FSR 1 / Ultra Quality / 70% sharpening / overlay on**. Compare it with normal rendering using Ctrl+F8 while paused on the same busy colony view. If it is still too soft, try Native at about 35% sharpening. Use 125% supersampling with light sharpening only when clarity matters more than GPU performance. The 150% mode is a high-cost comparison setting.
 
-The FPS cap defaults to off. Select a cap under the mod settings. If VSync is active, it takes priority unless **Override VSync to enforce this cap** is enabled. Turning the cap off restores the target frame rate and VSync setting that were active before the limiter took control.
+For frame-rate limiting, use RimWorld's VSync behavior or a graphics-driver limiter such as NVIDIA Control Panel.
 
 For the smoke test, check mouse alignment at all four screen edges, crisp UI text, water and weather, fog, selection outlines, Camera+ zoom, planet/map transitions, and fullscreen/window changes. The overlay should report the selected colony render size and the 5120 x 1440 output.
 

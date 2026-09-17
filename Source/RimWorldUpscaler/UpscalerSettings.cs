@@ -26,8 +26,6 @@ namespace RimWorldUpscaler
         public UpscaleFilter Filter = UpscaleFilter.Fsr1;
         public QualityPreset Quality = QualityPreset.Quality;
         public float Sharpness = 0.5f;
-        public int FrameRateCap;
-        public bool OverrideVSyncForFrameRateCap;
 
         public float RenderScale => ScaleFor(Quality);
 
@@ -38,8 +36,6 @@ namespace RimWorldUpscaler
             Filter = UpscaleFilter.Fsr1;
             Quality = QualityPreset.Quality;
             Sharpness = 0.5f;
-            FrameRateCap = 0;
-            OverrideVSyncForFrameRateCap = false;
         }
 
         public static float ScaleFor(QualityPreset quality)
@@ -61,7 +57,6 @@ namespace RimWorldUpscaler
             if (!Enum.IsDefined(typeof(UpscaleFilter), Filter)) Filter = UpscaleFilter.Fsr1;
             if (!Enum.IsDefined(typeof(QualityPreset), Quality)) Quality = QualityPreset.Quality;
             Sharpness = float.IsNaN(Sharpness) || float.IsInfinity(Sharpness) ? 0.5f : Mathf.Clamp01(Sharpness);
-            FrameRateCap = FrameRateCap <= 0 ? 0 : Mathf.Clamp(FrameRateCap, 30, 360);
         }
 
         public override void ExposeData()
@@ -71,8 +66,6 @@ namespace RimWorldUpscaler
             Scribe_Values.Look(ref Filter, "filter", UpscaleFilter.Fsr1);
             Scribe_Values.Look(ref Quality, "quality", QualityPreset.Quality);
             Scribe_Values.Look(ref Sharpness, "sharpness", 0.5f);
-            Scribe_Values.Look(ref FrameRateCap, "frameRateCap", 0);
-            Scribe_Values.Look(ref OverrideVSyncForFrameRateCap, "overrideVSyncForFrameRateCap", false);
             if (Scribe.mode == LoadSaveMode.PostLoadInit) Validate();
         }
     }

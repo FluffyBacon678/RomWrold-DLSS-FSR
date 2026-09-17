@@ -9,7 +9,7 @@ The chosen direction is graphics upscaling. The user explicitly prefers lower-re
 - RimWorld 1.6, Windows, DirectX 11; colony-map camera only.
 - Genuine AMD FSR 1 EASU spatial upscaling and optional RCAS sharpening.
 - Separate bilinear baseline; four sub-native presets, Native 100%, and 125% / 150% supersampling; native-resolution UI.
-- Immediate settings, FPS/status overlay, a reversible 30-240 FPS limiter with optional VSync override, and Ctrl+F8 native-rendering toggle.
+- Immediate settings, FPS/status overlay, and Ctrl+F8 native-rendering toggle.
 - No simulation patches or save-game components.
 - Planet views, orbital backgrounds, stereo/partial viewports and external targets bypass upscaling.
 - DLSS is not implemented: RimWorld's built-in pipeline does not provide the temporal inputs or renderer integration required for a stable Workshop-safe implementation.
@@ -26,13 +26,17 @@ FSR is implemented with fragment shaders around AMD's original MIT headers. The 
 
 ## Build and validation status
 
-The 0.1.3 C# runtime compiles cleanly, and both actual FSR fragment programs compile as Shader Model 5.0 without warnings. The GPU suite also exercises both passes, including odd sizes and a 32:9 ultrawide case. A Core-only RimWorld test at 5120x1440 rendered the settings panel, enforced a 30 FPS cap with VSync override, presented a 6400x1800 supersampled colony frame, then restored the prior 120 FPS target and VSync when the cap was disabled. These checks do not establish an in-game performance improvement.
+The 0.1.4 C# runtime compiles cleanly, and both actual FSR fragment programs compile as Shader Model 5.0 without warnings. The GPU suite also exercises both passes, including odd sizes and a 32:9 ultrawide case. A Core-only RimWorld test rendered the simplified settings panel while loading a legacy settings file containing the removed 60 FPS cap; the stale entry was ignored and the game retained its original 120 FPS target and VSync. The earlier 0.1.3 test presented a 6400x1800 supersampled colony frame at 5120x1440. These checks do not establish an in-game performance improvement.
 
 Unity 2022.3.35f1 is installed at .tools/UnityEditor-2022.3.35f1. With normal desktop access, the active Personal license was detected. Both shader passes completed the D3D11 GPU validation suite on the RTX 2070 SUPER. The build then reopened the Windows-player bundle, verified the shader and both passes, and recorded its SHA-256 hash for the package gate.
 
 A separate test profile is at .scratch/TestProfile. RimWorld 1.6.4871 started there at 5120x1440 on DirectX 11 and successfully loaded the bundle, reporting EASU and RCAS ready. A copied save with the user's 67-mod list reached `OnMapLoaded`, but hidden automation hit existing RimHUD/HugsLib/Verse.Text GUI initialization errors before a stable colony frame. No upscaler code appeared in those stacks, and no gameplay visual pass is recorded from that run.
 
-The final 0.1.3 local test copy is installed at E:/SteamLibrary/steamapps/common/RimWorld/Mods/RimWorldUpscaler and is active in the normal mod list. The user enabled render scaling through the settings panel; the update preserves that setting. Temporary test helpers were removed, the earlier installed build and prior ModsConfig.xml were backed up, and no original saves were edited.
+The final 0.1.4 local test copy is installed at E:/SteamLibrary/steamapps/common/RimWorld/Mods/RimWorldUpscaler and is active in the normal mod list. The user enabled render scaling through the settings panel; the update preserves that setting. Temporary test helpers were removed, the earlier installed build and prior ModsConfig.xml were backed up, and no original saves were edited.
+
+## 0.1.4 settings hotfix
+
+After a 60 FPS cap was saved, the user encountered a blank/stuck mod-options panel. Player.log showed no upscaler rendering exception, but the panel stopped after its first line. Version 0.1.4 removes the in-game FPS limiter and its runtime ownership of VSync/targetFrameRate, replaces the nested scrolling layout with a compact standard listing, and safely ignores the old XML fields. Frame limiting is left to VSync or the graphics driver.
 
 ## Camera+ Mods-page crash
 

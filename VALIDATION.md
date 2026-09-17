@@ -18,6 +18,7 @@
 - Built runtime 0.1.3 with 50-77% performance presets, Native 100%, 125% / 150% supersampling, clearer ultrawide guidance, and a reversible FPS limiter; compilation completed with zero warnings and zero errors.
 - Ran a Core-only RimWorld 1.6.4871 test at 5120x1440: the settings panel rendered, the FSR bundle loaded, a 30 FPS cap set Unity to 30 with VSync disabled, and the first colony frame presented at 6400x1800 -> 5120x1440.
 - Disabled the FPS cap during that run and verified restoration to the pre-existing 120 FPS target and VSync-on state. The temporary probe exited and was removed from the game installation.
+- After the user encountered a blank/stuck options panel with a saved 60 FPS cap, version 0.1.4 removed the limiter and nested scrolling UI. A targeted RimWorld test loaded the legacy cap field, rendered the compact panel successfully, ignored the obsolete cap, and retained the game's 120 FPS/VSync-on state.
 
 ## Pending
 
