@@ -5,6 +5,9 @@
   <packageId>fluffybacon.rimworldupscaler</packageId>
   <modVersion>0.1.0</modVersion>
   <supportedVersions><li>1.6</li></supportedVersions>
+  <loadAfter>
+    <li>brrainz.cameraplus</li>
+  </loadAfter>
   <description>Render the colony view at a lower resolution, then upscale it using AMD FidelityFX Super Resolution 1 (EASU and RCAS) or bilinear filtering. RimWorld's interface is drawn at the normal display resolution.
 
 Early Windows / DirectX 11 preview. Enable it under Options > Mod settings > RimWorld Upscaler. Includes quality presets, sharpening, a status overlay, safe native-rendering fallback, and Ctrl+F8 to switch back to native rendering.
