@@ -12,8 +12,9 @@ This is a development preview, not DLSS, temporal FSR, or frame generation. It d
 - Immediate settings changes; Ctrl+F8 toggles native rendering.
 - Optional status / FPS overlay with actual render dimensions.
 - Defaults to disabled. Unsupported views and camera arrangements use native rendering.
+- A safe-default reset and live renderer/status diagnostics in the mod settings.
 
-The initial target is **Windows / DirectX 11**, colony view only. Planet views, Odyssey maps with world backgrounds, external camera targets, stereo views, and partial-screen camera viewports bypass it. Compatibility with Camera+ and other graphics mods needs in-game verification.
+The initial target is **RimWorld 1.6 on Windows / DirectX 11**, colony view only. Planet views, Odyssey maps with world backgrounds, external camera targets, stereo views, and partial-screen camera viewports bypass it. Compatibility with Camera+ and other graphics or camera mods still needs in-game verification.
 
 ## Use a built preview
 
@@ -22,6 +23,17 @@ Copy `Mod` to `RimWorld/Mods/RimWorldUpscaler`, enable **RimWorld Upscaler (Prev
 Start with Quality. Zero sharpening bypasses RCAS. Ctrl+F8 switches to native for comparison. If status says the FSR bundle is missing, build the shaders; bilinear remains a separate option. Shader source alone cannot enable FSR in the game.
 
 No data is added to saves. Disable the mod to stop its rendering changes. Keep backups for new-mod testing.
+
+## Compatibility and safety
+
+- No Harmony dependency, gameplay definitions, simulation patches, or save data.
+- Disabled by default and removable from an existing save.
+- Automatically restores the camera and falls back to native rendering when a required condition changes or an exception occurs.
+- Leaves the interface at display resolution and only redirects the colony camera during its render.
+- Does not claim universal compatibility with camera, post-processing, screenshot, or multiplayer rendering mods. Test those combinations before a Workshop stability claim.
+- Declares only RimWorld 1.6 support because that is the version it is compiled against and being tested on.
+
+The release folder includes `About/Preview.png` at 640x360, `About/ModIcon.png` at 64x64, a unique package ID, a mod version, supported-version metadata, and third-party license notices.
 
 ## Build
 

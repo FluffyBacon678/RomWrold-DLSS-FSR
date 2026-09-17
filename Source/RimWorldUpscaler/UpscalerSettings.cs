@@ -17,6 +17,15 @@ namespace RimWorldUpscaler
 
         public float RenderScale => ScaleFor(Quality);
 
+        public void ResetToSafeDefaults()
+        {
+            Enabled = false;
+            ShowOverlay = true;
+            Filter = UpscaleFilter.Fsr1;
+            Quality = QualityPreset.Quality;
+            Sharpness = 0.5f;
+        }
+
         public static float ScaleFor(QualityPreset quality)
         {
             switch (quality)

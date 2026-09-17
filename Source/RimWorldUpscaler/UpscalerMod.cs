@@ -10,7 +10,7 @@ namespace RimWorldUpscaler
         internal static UpscalerMod Instance;
         internal readonly UpscalerSettings Settings;
         private Vector2 scrollPosition;
-        private float settingsHeight = 560f;
+        private float settingsHeight = 690f;
 
         public UpscalerMod(ModContentPack content) : base(content)
         {
@@ -62,10 +62,25 @@ namespace RimWorldUpscaler
             listing.Label("Ctrl+F8 toggles native rendering for a quick comparison. Settings take effect immediately.");
             listing.Label("Status: " + UpscalerController.Status);
             listing.GapLine();
+            listing.Label("Safety and compatibility");
+            listing.Label("The mod starts disabled, does not alter saves, and automatically returns to native rendering outside colony maps, on unsupported graphics APIs, when another mod owns the camera output, or after a rendering error.");
+            listing.Label($"Detected renderer: {SystemInfo.graphicsDeviceType} | {SystemInfo.graphicsDeviceName}");
+            if (listing.ButtonText("Reset to safe defaults"))
+            {
+                Settings.ResetToSafeDefaults();
+                WriteSettings();
+            }
+            listing.GapLine();
             listing.Label("Windows / DirectX 11 preview. FSR 1 is spatial upscaling; it does not generate frames or change simulation speed. Lower resolution may not increase FPS when the CPU is the limit.");
             settingsHeight = listing.CurHeight + 12f;
             listing.End();
             Widgets.EndScrollView();
+        }
+
+        public override void WriteSettings()
+        {
+            Settings.Validate();
+            base.WriteSettings();
         }
 
         internal static string FilterLabel(UpscaleFilter filter) => filter == UpscaleFilter.Fsr1 ? "FSR 1" : "Bilinear";
