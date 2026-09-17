@@ -1,0 +1,12 @@
+.tools/
+.scratch/
+**/bin/
+**/obj/
+UnityProject/Library/
+UnityProject/Temp/
+UnityProject/Logs/
+UnityProject/UserSettings/
+UnityProject/Build/
+*.csproj.user
+build.local.ps1
+dist/

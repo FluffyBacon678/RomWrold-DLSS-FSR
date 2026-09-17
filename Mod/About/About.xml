@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>RimWorld Upscaler (Preview)</name>
+  <author>FluffyBacon</author>
+  <packageId>fluffybacon.rimworldupscaler</packageId>
+  <supportedVersions><li>1.6</li></supportedVersions>
+  <description>Render the colony view at a lower resolution, then upscale it using AMD FidelityFX Super Resolution 1 (EASU and RCAS) or bilinear filtering. RimWorld's interface is drawn at the normal display resolution.
+
+Early Windows / DirectX 11 preview. Enable it under Options > Mod settings > RimWorld Upscaler. Includes quality presets, sharpening, a status overlay, and Ctrl+F8 to switch back to native rendering.
+
+This is spatial FSR 1, not DLSS, temporal FSR, or frame generation. It changes rendering, not simulation speed. Benefits depend on the GPU workload; reducing resolution may not improve a CPU-limited colony. Compatibility and image quality need testing with your mod list.</description>
+</ModMetaData>
