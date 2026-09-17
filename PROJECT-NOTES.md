@@ -20,7 +20,7 @@ The local game is RimWorld 1.6.4871 on Unity 2022.3.35f1 and DirectX 11. Camera+
 
 Vanilla ColorCorrectionCurves uses OnRenderImage after the map camera's OnPostRender. A later presentation camera lets that effect finish, restores the main camera, and composites the low-resolution image before UI rendering. Camera aspect/HDR and water globals are restored. The water-depth subcamera stays native for this preview; water orientation still needs a visual test.
 
-RimWorld loads files in AssetBundles itself. The runtime reuses its loaded bundle, with the _win suffix restricting game auto-loading to Windows. It does not duplicate-load or unload a bundle owned by RimWorld.
+RimWorld loads files in AssetBundles itself. The runtime reuses its loaded bundle, with the _win suffix restricting game auto-loading to Windows. It does not duplicate-load or unload a bundle owned by RimWorld. The Unity project must retain the built-in AssetBundle module; without it Unity can emit a shader data file that looks like UnityFS but lacks the AssetBundle index required by the player.
 
 FSR is implemented with fragment shaders around AMD's original MIT headers. The user's existing -disable-compute-shaders launch option is not changed.
 
@@ -28,13 +28,15 @@ FSR is implemented with fragment shaders around AMD's original MIT headers. The 
 
 The C# runtime compiles cleanly, and both actual FSR fragment programs compile as Shader Model 5.0 without warnings. The GPU suite also exercises both passes, including odd sizes and a 32:9 ultrawide case. These checks do not establish in-game performance improvement.
 
-Unity 2022.3.35f1 is installed at .tools/UnityEditor-2022.3.35f1. With normal desktop access, the active Personal license was detected. Both shader passes completed the D3D11 GPU validation suite on the RTX 2070 SUPER, and the Windows-player bundle was created. The editor does not reopen that player-targeted bundle; RimWorld remains the authoritative bundle load test.
+Unity 2022.3.35f1 is installed at .tools/UnityEditor-2022.3.35f1. With normal desktop access, the active Personal license was detected. Both shader passes completed the D3D11 GPU validation suite on the RTX 2070 SUPER. The build then reopened the Windows-player bundle, verified the shader and both passes, and recorded its SHA-256 hash for the package gate.
 
-A separate test profile is at .scratch/TestProfile. The final local test copy is installed at E:/SteamLibrary/steamapps/common/RimWorld/Mods/RimWorldUpscaler and remains disabled in the normal mod list until the user enables it. No saves were edited. No gameplay visual pass is recorded yet.
+A separate test profile is at .scratch/TestProfile. RimWorld 1.6.4871 started there at 5120x1440 on DirectX 11 and successfully loaded the bundle, reporting EASU and RCAS ready. A copied save with the user's 67-mod list reached `OnMapLoaded`, but hidden automation hit existing RimHUD/HugsLib/Verse.Text GUI initialization errors before a stable colony frame. No upscaler code appeared in those stacks, and no gameplay visual pass is recorded from that run.
+
+The final local test copy is installed at E:/SteamLibrary/steamapps/common/RimWorld/Mods/RimWorldUpscaler and remains disabled in the normal mod list until the user enables it. The temporary test helper was removed. No original saves or normal mod settings were edited.
 
 ## Next verification
 
-Enable the final local copy and test native/FSR/bilinear, selection alignment, Camera+ zoom, water, color correction, resizing, map transitions, and enable/disable behavior. RimWorld is the authoritative Windows-player bundle and camera-integration test.
+Enable the final local copy and test native/FSR/bilinear, selection alignment, Camera+ zoom, water, color correction, resizing, map transitions, and enable/disable behavior. RimWorld remains the authoritative camera-integration and visual-quality test.
 
 Compare identical paused views first. Measure frame times at fixed game speed/camera/resolution, include upscaling overhead, repeat runs and report variability. Fewer shaded pixels do not guarantee more FPS. Workshop publication remains pending testing.
 

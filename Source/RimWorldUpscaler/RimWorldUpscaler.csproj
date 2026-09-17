@@ -4,7 +4,7 @@
     <LangVersion>latest</LangVersion>
     <AssemblyName>RimWorldUpscaler</AssemblyName>
     <RootNamespace>RimWorldUpscaler</RootNamespace>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>../../Mod/1.6/Assemblies/</OutputPath>

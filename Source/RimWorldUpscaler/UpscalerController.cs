@@ -22,6 +22,8 @@ namespace RimWorldUpscaler
         private AssetBundle bundle;
         private Material material;
         private bool shaderAttempted;
+        private bool shaderReadyLogged;
+        private bool firstFrameLogged;
         private string shaderError;
         private string fault;
         private bool lastEnabled;
@@ -51,6 +53,20 @@ namespace RimWorldUpscaler
             instance = host.AddComponent<UpscalerController>();
             instance.mod = owner;
             Status = "Native rendering (disabled)";
+            Log.Message($"[RimWorld Upscaler] Runtime {typeof(UpscalerMod).Assembly.GetName().Version} initialized; " +
+                $"renderer={SystemInfo.graphicsDeviceType}, display={Screen.width}x{Screen.height}, enabled={owner.Settings.Enabled}.");
+
+            // Preflight the exact Windows-player bundle after RimWorld finishes
+            // loading mod content. A failed preflight remains retryable on the
+            // colony map in case another loader was still finishing.
+            if (owner.Settings.Enabled && owner.Settings.Filter == UpscaleFilter.Fsr1 &&
+                Application.platform == RuntimePlatform.WindowsPlayer &&
+                SystemInfo.graphicsDeviceType == GraphicsDeviceType.Direct3D11 &&
+                GraphicsSettings.currentRenderPipeline == null && !instance.LoadShader())
+            {
+                Log.Warning("[RimWorld Upscaler] Shader preflight deferred: " + instance.shaderError);
+                instance.shaderAttempted = false;
+            }
         }
 
         private void OnEnable()
@@ -216,7 +232,15 @@ namespace RimWorldUpscaler
                 {
                     if (shader.name != "Hidden/RimWorldUpscaler/FSR1" || !shader.isSupported) continue;
                     material = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
-                    if (material.passCount == 2) return true;
+                    if (material.passCount == 2)
+                    {
+                        if (!shaderReadyLogged)
+                        {
+                            Log.Message("[RimWorld Upscaler] FSR 1 player shader bundle loaded; EASU and RCAS are ready.");
+                            shaderReadyLogged = true;
+                        }
+                        return true;
+                    }
                     Object.Destroy(material);
                     material = null;
                 }
@@ -286,6 +310,11 @@ namespace RimWorldUpscaler
                 else Graphics.Blit(lowTarget, (RenderTexture)null);
                 presentedFrame = Time.frameCount;
                 Status = $"{UpscalerMod.FilterLabel(frameFilter)}: {lowTarget.width} x {lowTarget.height} -> {outputWidth} x {outputHeight}";
+                if (!firstFrameLogged)
+                {
+                    Log.Message("[RimWorld Upscaler] First upscaled colony frame presented: " + Status);
+                    firstFrameLogged = true;
+                }
             }
             catch (Exception exception) { Fail(exception.Message); }
             finally

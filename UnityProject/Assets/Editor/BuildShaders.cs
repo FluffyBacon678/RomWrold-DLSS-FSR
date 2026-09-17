@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -18,6 +19,7 @@ namespace RimWorldUpscaler.EditorTools
             public bool success;
             public string editorVersion;
             public string bundlePath;
+            public string bundleSha256;
             public string graphicsDevice;
             public string gpuValidation;
             public string error;
@@ -46,6 +48,7 @@ namespace RimWorldUpscaler.EditorTools
                     throw new InvalidOperationException("Use Unity 2022.3.35f1 to match RimWorld 1.6.");
 
                 PlayerSettings.colorSpace = ColorSpace.Gamma;
+                PlayerSettings.stripEngineCode = false;
                 PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.StandaloneWindows64, false);
                 PlayerSettings.SetGraphicsAPIs(BuildTarget.StandaloneWindows64,
                     new[] { GraphicsDeviceType.Direct3D11 });
@@ -76,13 +79,11 @@ namespace RimWorldUpscaler.EditorTools
                 ThrowIfShaderErrors(shader);
 
                 string builtPath = Path.Combine(output, BundleName);
+                ValidatePlayerBundle(builtPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(destination));
                 File.Copy(builtPath, destination, true);
-                // StandaloneWindows64 bundles can be rejected when re-opened by
-                // the editor runtime even when the editor and player share the
-                // same Unity revision. The source shader was executed above;
-                // the compiled player bundle is load-tested in RimWorld itself.
-                result.gpuValidation += "; player bundle written for RimWorld load test";
+                result.bundleSha256 = Sha256(destination);
+                result.gpuValidation += "; Windows player bundle reload passed";
                 result.success = true;
                 Debug.Log("RimWorld Upscaler shader bundle built and verified: " + destination);
             }
@@ -96,6 +97,37 @@ namespace RimWorldUpscaler.EditorTools
             {
                 File.WriteAllText(Path.Combine(scratch, "shader-build-result.json"), JsonUtility.ToJson(result, true));
             }
+        }
+
+        private static void ValidatePlayerBundle(string path)
+        {
+            AssetBundle playerBundle = null;
+            Material playerMaterial = null;
+            try
+            {
+                playerBundle = AssetBundle.LoadFromFile(path);
+                if (playerBundle == null)
+                    throw new InvalidOperationException("Unity could not reload the Windows player AssetBundle.");
+                Shader playerShader = playerBundle.LoadAllAssets<Shader>()
+                    .FirstOrDefault(candidate => candidate.name == ShaderName);
+                if (playerShader == null || !playerShader.isSupported)
+                    throw new InvalidOperationException("The Windows player AssetBundle does not contain a supported FSR shader.");
+                playerMaterial = new Material(playerShader);
+                if (playerMaterial.passCount != 2)
+                    throw new InvalidOperationException("The bundled FSR shader does not contain EASU and RCAS.");
+            }
+            finally
+            {
+                if (playerMaterial != null) UnityEngine.Object.DestroyImmediate(playerMaterial);
+                if (playerBundle != null) playerBundle.Unload(true);
+            }
+        }
+
+        private static string Sha256(string path)
+        {
+            using (FileStream stream = File.OpenRead(path))
+            using (SHA256 sha256 = SHA256.Create())
+                return BitConverter.ToString(sha256.ComputeHash(stream)).Replace("-", string.Empty);
         }
 
         internal static void ThrowIfShaderErrors(Shader shader)

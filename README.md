@@ -41,7 +41,7 @@ For the smoke test, check mouse alignment at all four screen edges, crisp UI tex
 
 - No Harmony dependency, gameplay definitions, simulation patches, or save data.
 - Disabled by default and removable from an existing save.
-- Automatically restores the camera and falls back to native rendering when a required condition changes or an exception occurs.
+- Preflights the shipped FSR player shader after mod loading, then automatically restores the camera and falls back to native rendering when a required condition changes or an exception occurs.
 - Leaves the interface at display resolution and only redirects the colony camera during its render.
 - Does not claim universal compatibility with camera, post-processing, screenshot, or multiplayer rendering mods. Test those combinations before a Workshop stability claim.
 - Declares only RimWorld 1.6 support because that is the version it is compiled against and being tested on.
@@ -58,7 +58,7 @@ Requires a .NET SDK, local RimWorld installation, and a licensed Unity **2022.3.
 .\scripts\Package-Mod.ps1
 ```
 
-Outputs: `Mod/1.6/Assemblies/RimWorldUpscaler.dll` and `Mod/AssetBundles/rimworldupscaler_win`. The shader builder runs GPU tests and builds the Windows-player bundle. RimWorld itself then provides the authoritative player-bundle load test. Results go to `.scratch/shader-build-result.json`. Packaging creates a local ZIP; it does not publish anything.
+Outputs: `Mod/1.6/Assemblies/RimWorldUpscaler.dll` and `Mod/AssetBundles/rimworldupscaler_win`. The shader builder runs GPU tests, builds the Windows-player bundle, and reloads it to verify the shader and both passes. Results and the verified bundle hash go to `.scratch/shader-build-result.json`; packaging rejects a stale or different bundle. Packaging creates a local ZIP and does not publish anything.
 
 `-SkipGpuValidation` supports machines without graphics access. Skipped tests are not passed tests. Resolve licensing failures through Unity Hub before rerunning the shader build.
 
