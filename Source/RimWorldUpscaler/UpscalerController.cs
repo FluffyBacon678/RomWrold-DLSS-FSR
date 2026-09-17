@@ -14,6 +14,9 @@ namespace RimWorldUpscaler
     {
         private static UpscalerController instance;
         public static string Status { get; private set; } = "Starting";
+        public static string FrameRateLimitStatus => instance == null
+            ? "FPS limiter: starting"
+            : instance.DescribeFrameRateLimit();
         private UpscalerMod mod;
         private Camera mapCamera;
         private Camera presenter;
@@ -44,6 +47,11 @@ namespace RimWorldUpscaler
         private GUIStyle overlayStyle;
         private string overlayText = "";
         private float nextOverlayUpdate;
+        private bool frameLimitStateCaptured;
+        private int originalTargetFrameRate;
+        private int originalVSyncCount;
+        private int appliedFrameRateCap;
+        private bool overridingVSync;
 
         internal static void Initialize(UpscalerMod owner)
         {
@@ -80,6 +88,7 @@ namespace RimWorldUpscaler
             if (mod == null) return;
             try
             {
+                ApplyFrameRateLimit();
                 if (ownsCamera)
                 {
                     RestoreCamera();
@@ -145,8 +154,9 @@ namespace RimWorldUpscaler
             else if (!SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGB32))
                 reason = "Native rendering: required render textures are unsupported";
             else if (SystemInfo.maxTextureSize > 0 &&
-                (Screen.width > SystemInfo.maxTextureSize || Screen.height > SystemInfo.maxTextureSize))
-                reason = $"Native rendering: {Screen.width} x {Screen.height} exceeds the GPU texture limit";
+                (Mathf.RoundToInt(Screen.width * mod.Settings.RenderScale) > SystemInfo.maxTextureSize ||
+                 Mathf.RoundToInt(Screen.height * mod.Settings.RenderScale) > SystemInfo.maxTextureSize))
+                reason = "Native rendering: the selected render scale exceeds the GPU texture limit";
             else if (Current.ProgramState != ProgramState.Playing || Find.CurrentMap == null ||
                 LongEventHandler.ShouldWaitForEvent)
                 reason = "Native rendering: open a colony map";
@@ -303,7 +313,13 @@ namespace RimWorldUpscaler
                     material.SetFloat("_FsrSharpness", 2f * (1f - frameSharpness));
                     material.SetFloat("_FsrLinearColorSpace", linear ? 1f : 0f);
                     material.SetFloat("_FsrFlipY", 0f);
-                    Graphics.Blit(lowTarget, fullTarget, material, 0);
+                    // EASU is an upscaler. At native resolution or above, use
+                    // Unity's filtered resolve and retain RCAS as an optional
+                    // final sharpening pass.
+                    if (lowTarget.width < outputWidth || lowTarget.height < outputHeight)
+                        Graphics.Blit(lowTarget, fullTarget, material, 0);
+                    else
+                        Graphics.Blit(lowTarget, fullTarget);
                     if (frameSharpness > 0f) Graphics.Blit(fullTarget, (RenderTexture)null, material, 1);
                     else Graphics.Blit(fullTarget, (RenderTexture)null);
                 }
@@ -359,6 +375,61 @@ namespace RimWorldUpscaler
             Log.Warning("[RimWorld Upscaler] " + Status);
         }
 
+        private void ApplyFrameRateLimit()
+        {
+            int requested = mod.Settings.FrameRateCap;
+            if (requested <= 0)
+            {
+                RestoreFrameRateLimit();
+                return;
+            }
+
+            if (!frameLimitStateCaptured)
+            {
+                originalTargetFrameRate = Application.targetFrameRate;
+                originalVSyncCount = QualitySettings.vSyncCount;
+                frameLimitStateCaptured = true;
+            }
+
+            bool shouldOverrideVSync = mod.Settings.OverrideVSyncForFrameRateCap;
+            if (shouldOverrideVSync)
+            {
+                QualitySettings.vSyncCount = 0;
+                overridingVSync = true;
+            }
+            else if (overridingVSync)
+            {
+                QualitySettings.vSyncCount = originalVSyncCount;
+                overridingVSync = false;
+            }
+
+            if (Application.targetFrameRate != requested)
+                Application.targetFrameRate = requested;
+            appliedFrameRateCap = requested;
+        }
+
+        private string DescribeFrameRateLimit()
+        {
+            int requested = mod == null ? 0 : mod.Settings.FrameRateCap;
+            if (requested <= 0)
+                return "FPS limiter: off; RimWorld, VSync, or the graphics driver controls presentation.";
+            if (QualitySettings.vSyncCount > 0 && !mod.Settings.OverrideVSyncForFrameRateCap)
+                return $"FPS limiter: {requested} requested, but VSync is active and may take priority.";
+            return $"FPS limiter: {requested} FPS{(mod.Settings.OverrideVSyncForFrameRateCap ? " (VSync overridden)" : "")}.";
+        }
+
+        private void RestoreFrameRateLimit()
+        {
+            if (!frameLimitStateCaptured) return;
+            if (appliedFrameRateCap > 0 && Application.targetFrameRate == appliedFrameRateCap)
+                Application.targetFrameRate = originalTargetFrameRate;
+            if (overridingVSync && QualitySettings.vSyncCount == 0)
+                QualitySettings.vSyncCount = originalVSyncCount;
+            appliedFrameRateCap = 0;
+            overridingVSync = false;
+            frameLimitStateCaptured = false;
+        }
+
         private void ReleaseTargets()
         {
             preparedFrame = -1;
@@ -409,6 +480,7 @@ namespace RimWorldUpscaler
 
         private void OnDestroy()
         {
+            RestoreFrameRateLimit();
             if (presenter != null) Object.Destroy(presenter.gameObject);
             if (material != null) Object.Destroy(material);
             if (instance == this) instance = null;

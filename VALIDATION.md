@@ -15,10 +15,13 @@
 - Added the required About metadata plus a 640x360 preview and 64x64 mod icon; the preview is below Steam's 1 MB limit.
 - Reproduced the user's native Mods-page crash in an isolated copy of the complete mod list. The stack ends in Camera+ 3.4.7's bundled CrossPromotion 1.1.2 calling `WorkshopItemHook` before the disabled upscaler loads. A local same-identity shim that disables only Camera+'s promotional panel removed the crash.
 - Repeated the full-stack test at 5120x1440 with the upscaler active: runtime 0.1.2 initialized with rendering disabled, the Mods page opened, remained stable for 15 seconds, and logged no upscaler errors.
+- Built runtime 0.1.3 with 50-77% performance presets, Native 100%, 125% / 150% supersampling, clearer ultrawide guidance, and a reversible FPS limiter; compilation completed with zero warnings and zero errors.
+- Ran a Core-only RimWorld 1.6.4871 test at 5120x1440: the settings panel rendered, the FSR bundle loaded, a 30 FPS cap set Unity to 30 with VSync disabled, and the first colony frame presented at 6400x1800 -> 5120x1440.
+- Disabled the FPS cap during that run and verified restoration to the pre-existing 120 FPS target and VSync-on state. The temporary probe exited and was removed from the game installation.
 
 ## Pending
 
-- First colony-frame presentation and in-game FSR/bilinear/native visual comparison, including mouse alignment.
+- Interactive FSR/bilinear/native/supersampling visual comparison, including mouse alignment and blur assessment.
 - Water, color correction, resize, scene transitions and Camera+ interaction.
 - Performance measurements. No FPS/TPS improvement has been established.
 
