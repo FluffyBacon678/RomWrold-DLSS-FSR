@@ -62,12 +62,12 @@ namespace RimWorldUpscaler
             if (Settings.RenderScale < 1f)
                 listing.Label("Below 100% saves GPU work but loses fine detail.");
             else if (Settings.RenderScale > 1f)
-                listing.Label("Supersampling improves detail but costs more GPU power and memory.");
+                listing.Label("Experimental filtered downsampling: may reduce aliasing, but can soften fine sprites and costs more GPU power and memory.");
             else
-                listing.Label("Native uses the display resolution; RCAS can still add sharpening.");
+                listing.Label("At 0% sharpening, Native is an untouched pass-through. RCAS sharpening changes the image.");
 
             bool ultrawide = Screen.height > 0 && Screen.width / (float)Screen.height >= 3f;
-            if (ultrawide && listing.ButtonText("Apply sharper ultrawide preset (77% + 70% sharpening)"))
+            if (ultrawide && listing.ButtonText("Apply ultrawide starting point (77% + 70% sharpening)"))
             {
                 Settings.Enabled = true;
                 Settings.Filter = UpscaleFilter.Fsr1;
@@ -81,10 +81,12 @@ namespace RimWorldUpscaler
             {
                 listing.Label($"RCAS sharpening: {Settings.Sharpness:P0}");
                 Settings.Sharpness = listing.Slider(Settings.Sharpness, 0f, 1f);
-                listing.Label("Sharper: Ultra Quality 70%. Maximum clarity: Native 35% or 125% at 20%.");
+                listing.Label("Below native, start around 50-70%. At Native, use 0% for exact pass-through.");
+                if (Settings.RenderScale > 1f)
+                    listing.Label("Supersampling uses filtered downsampling, not FSR upscaling; compare it carefully with Native.");
             }
             listing.CheckboxLabeled("Show rendering status and FPS", ref Settings.ShowOverlay);
-            listing.Label("Ctrl+F8 toggles normal rendering. Changes take effect immediately.");
+            listing.Label("Use Enable render scaling above for native comparison. Changes take effect immediately.");
             listing.Label("Status: " + UpscalerController.Status);
             listing.GapLine();
             listing.Label("Safety and compatibility");
@@ -112,8 +114,9 @@ namespace RimWorldUpscaler
             switch (quality)
             {
                 case QualityPreset.UltraQuality: name = "Ultra Quality"; break;
-                case QualityPreset.Supersample125: name = "Supersampling"; break;
-                case QualityPreset.Supersample150: name = "High supersampling"; break;
+                case QualityPreset.Native: name = "Native / no scaling"; break;
+                case QualityPreset.Supersample125: name = "Experimental supersampling"; break;
+                case QualityPreset.Supersample150: name = "Experimental high supersampling"; break;
                 default: name = quality.ToString(); break;
             }
             return $"{name} ({UpscalerSettings.ScaleFor(quality):P0} resolution per axis)";

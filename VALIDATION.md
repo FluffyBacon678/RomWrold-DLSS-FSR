@@ -19,6 +19,9 @@
 - Ran a Core-only RimWorld 1.6.4871 test at 5120x1440: the settings panel rendered, the FSR bundle loaded, a 30 FPS cap set Unity to 30 with VSync disabled, and the first colony frame presented at 6400x1800 -> 5120x1440.
 - Disabled the FPS cap during that run and verified restoration to the pre-existing 120 FPS target and VSync-on state. The temporary probe exited and was removed from the game installation.
 - After the user encountered a blank/stuck options panel with a saved 60 FPS cap, version 0.1.4 removed the limiter and nested scrolling UI. A targeted RimWorld test loaded the legacy cap field, rendered the compact panel successfully, ignored the obsolete cap, and retained the game's 120 FPS/VSync-on state.
+- A normal user-session log confirmed that 0.1.4 loaded EASU/RCAS and presented a 3198x1676 colony frame into a 2558x1341 window at the selected 125% setting.
+- A strict 0.1.5 audit removed the global Ctrl+F8 input hook and its legacy-input assembly reference. A Core-only RimWorld 1.6.4871 probe verified that FSR Native/0%, Bilinear Native, and disabled mode owned no camera, allocated no render targets, and left the presenter disabled.
+- Corrected the settings and documentation to describe supersampling as an experimental filtered resolve. No unverified clarity benefit is claimed.
 
 ## Pending
 
@@ -28,4 +31,4 @@
 
 For a broader isolated test, the active mod list and a copy of the latest save were loaded through a temporary smoke-test helper. Loading reached HugsLib's `OnMapLoaded`, but the hidden automated launch then encountered GUI initialization errors in RimHUD/HugsLib/Verse.Text before a stable rendered frame. No upscaler code appeared in those exception stacks. The helper was removed, the original save was never changed, and no visual pass is claimed from that run. The normal mod list now contains the upscaler by user request, while its rendering setting still defaults to disabled.
 
-The shader build and GPU validation establish that the shaders compile and render test images, and the isolated RimWorld launch establishes real player-bundle loading. Interactive RimWorld testing remains authoritative for camera integration and image quality. The shader builder records its result and bundle hash in `.scratch/shader-build-result.json`.
+An automated hidden-window image-quality attempt produced black screenshots and did not exercise the present path, so it was rejected rather than counted as evidence. The shader build and GPU validation establish that the shaders compile and render test images, and normal RimWorld logs establish real player-bundle loading and presentation. Interactive RimWorld testing remains authoritative for camera integration and image quality. The shader builder records its result and bundle hash in `.scratch/shader-build-result.json`.

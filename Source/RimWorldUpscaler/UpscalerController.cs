@@ -85,12 +85,6 @@ namespace RimWorldUpscaler
                     RestoreCamera();
                     Fail("Presentation camera did not finish the previous frame.");
                 }
-                if (Input.GetKeyDown(KeyCode.F8) &&
-                    (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
-                {
-                    mod.Settings.Enabled = !mod.Settings.Enabled;
-                    mod.WriteSettings();
-                }
                 if (mod.Settings.Enabled && !lastEnabled)
                 {
                     fault = null;
@@ -136,6 +130,9 @@ namespace RimWorldUpscaler
         {
             reason = null;
             if (!mod.Settings.Enabled) reason = "Native rendering (disabled)";
+            else if (mod.Settings.RenderScale == 1f &&
+                (mod.Settings.Filter == UpscaleFilter.Bilinear || mod.Settings.Sharpness <= 0f))
+                reason = "Native rendering: 100% scale with sharpening off";
             else if (fault != null) reason = "Native fallback: " + fault + " Toggle off/on to retry.";
             else if (SystemInfo.graphicsDeviceType != GraphicsDeviceType.Direct3D11 ||
                 Application.platform != RuntimePlatform.WindowsPlayer)

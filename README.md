@@ -1,6 +1,6 @@
 # RimWorld Upscaler
 
-An experimental RimWorld 1.6 mod that renders the colony at a configurable resolution and scales it to the display using **AMD FSR 1** or filtered downsampling. Menus and the normal game interface stay at display resolution.
+An experimental RimWorld 1.6 mod that renders the colony at a configurable resolution and scales it to the display using **AMD FSR 1** or filtered resizing. Menus and the normal game interface stay at display resolution.
 
 This is a development preview, not DLSS, temporal FSR, or frame generation. It does not accelerate simulation. Scaling has its own GPU cost; FPS gains are not guaranteed.
 
@@ -8,8 +8,8 @@ This is a development preview, not DLSS, temporal FSR, or frame generation. It d
 
 - Genuine AMD EASU upscaling below native resolution and optional RCAS sharpening.
 - Separate bilinear mode for comparison.
-- Performance presets from 50% to 77%, Native 100%, and 125% / 150% supersampling.
-- Immediate settings changes; Ctrl+F8 toggles native rendering.
+- Performance presets from 50% to 77%, Native 100%, and experimental 125% / 150% supersampling.
+- Immediate settings changes. Native at 0% sharpening is a true pass-through with no camera redirection or extra blit.
 - Optional status / FPS overlay with actual render dimensions.
 - Defaults to disabled. Unsupported views and camera arrangements use native rendering.
 - A safe-default reset and live renderer/status diagnostics in the mod settings.
@@ -20,7 +20,7 @@ The initial target is **RimWorld 1.6 on Windows / DirectX 11**, colony view only
 
 Copy `Mod` to `RimWorld/Mods/RimWorldUpscaler`, enable **RimWorld Upscaler (Preview)** in the mod list, and restart. In **Options > Mod options > RimWorld Upscaler**, choose a scaling method and render resolution, then enable render scaling. No Harmony dependency is needed.
 
-For a sharp image, start with the **Sharper ultrawide preset** or select Ultra Quality with 70% sharpening. Native and supersampling settings trade GPU performance for clarity. Zero sharpening bypasses RCAS. Ctrl+F8 switches to normal rendering for comparison. If status says the FSR bundle is missing, build the shaders; bilinear remains a separate option.
+For an initial comparison, select Ultra Quality with 50-70% sharpening. Below-native FSR inevitably loses some source detail and can look softer or show sharpening halos. Native at 0% sharpening is the clean reference path. The supersampling modes use Unity's filtered downsample; they may reduce aliasing, but are not guaranteed to improve sprite detail and can look softer. Use the enable checkbox to compare against normal rendering. If status says the FSR bundle is missing, build the shaders; bilinear remains a separate option.
 
 No data is added to saves. Disable the mod to stop its rendering changes. Keep backups for new-mod testing.
 
@@ -33,10 +33,10 @@ No data is added to saves. Disable the mod to stop its rendering changes. Keep b
 | Quality | 3413 x 960 | 5120 x 1440 |
 | Ultra Quality | 3938 x 1108 | 5120 x 1440 |
 | Native | 5120 x 1440 | 5120 x 1440 |
-| Supersampling | 6400 x 1800 | 5120 x 1440 |
-| High supersampling | 7680 x 2160 | 5120 x 1440 |
+| Experimental supersampling | 6400 x 1800 | 5120 x 1440 |
+| Experimental high supersampling | 7680 x 2160 | 5120 x 1440 |
 
-Start with **FSR 1 / Ultra Quality / 70% sharpening / overlay on**. Compare it with normal rendering using Ctrl+F8 while paused on the same busy colony view. If it is still too soft, try Native at about 35% sharpening. Use 125% supersampling with light sharpening only when clarity matters more than GPU performance. The 150% mode is a high-cost comparison setting.
+Start with **FSR 1 / Ultra Quality / 50-70% sharpening / overlay on**. Pause on the same busy colony view and compare it with Native at 0% sharpening or with render scaling disabled. If FSR is softer or shows bright/dark halos around text-like world details, reduce sharpening or keep the native path. Treat 125% and 150% as expensive experiments: their current filtered resolve is not proven to be clearer than native.
 
 For frame-rate limiting, use RimWorld's VSync behavior or a graphics-driver limiter such as NVIDIA Control Panel.
 
@@ -46,7 +46,7 @@ For the smoke test, check mouse alignment at all four screen edges, crisp UI tex
 
 True DLSS Super Resolution is temporal: it needs reliable motion vectors, depth, jitter, exposure, camera-reset handling, native SDK binaries, and renderer integration. RimWorld uses Unity's built-in render pipeline; Unity 2022.3 lists DLSS support for HDRP rather than the built-in pipeline. Injecting NVIDIA Streamline into a third-party Unity executable would also require low-level graphics-device and swap-chain ownership that is inappropriate for a safe Workshop mod. See the [Unity render-pipeline comparison](https://docs.unity3d.com/2022.3/Documentation/Manual/render-pipelines-feature-comparison.html) and [NVIDIA Streamline integration guide](https://github.com/NVIDIA-RTX/Streamline/blob/main/docs/ProgrammingGuide.md).
 
-FSR 1 remains the cross-vendor performance option. Native resolution with RCAS and the new supersampling modes provide sharper alternatives without pretending to be DLSS.
+FSR 1 remains the cross-vendor performance option. Native RCAS is optional image sharpening, while the supersampling modes are experimental filtered resolves; neither is claimed to add real source detail.
 
 ## Compatibility and safety
 

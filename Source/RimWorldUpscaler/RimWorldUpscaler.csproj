@@ -4,7 +4,7 @@
     <LangVersion>latest</LangVersion>
     <AssemblyName>RimWorldUpscaler</AssemblyName>
     <RootNamespace>RimWorldUpscaler</RootNamespace>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>../../Mod/1.6/Assemblies/</OutputPath>
@@ -18,7 +18,6 @@
     <Reference Include="UnityEngine"><HintPath>$(ManagedDir)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.IMGUIModule"><HintPath>$(ManagedDir)\UnityEngine.IMGUIModule.dll</HintPath><Private>false</Private></Reference>
-    <Reference Include="UnityEngine.InputLegacyModule"><HintPath>$(ManagedDir)\UnityEngine.InputLegacyModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.AssetBundleModule"><HintPath>$(ManagedDir)\UnityEngine.AssetBundleModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.TextRenderingModule"><HintPath>$(ManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
