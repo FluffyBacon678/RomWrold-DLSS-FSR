@@ -5,6 +5,9 @@
     <AssemblyName>RimWorldUpscaler</AssemblyName>
     <RootNamespace>RimWorldUpscaler</RootNamespace>
     <Version>0.1.5</Version>
+    <InformationalVersion>0.1.5</InformationalVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <Deterministic>true</Deterministic>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>../../Mod/1.6/Assemblies/</OutputPath>

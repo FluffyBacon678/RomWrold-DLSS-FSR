@@ -22,11 +22,16 @@
 - A normal user-session log confirmed that 0.1.4 loaded EASU/RCAS and presented a 3198x1676 colony frame into a 2558x1341 window at the selected 125% setting.
 - A strict 0.1.5 audit removed the global Ctrl+F8 input hook and its legacy-input assembly reference. A Core-only RimWorld 1.6.4871 probe verified that FSR Native/0%, Bilinear Native, and disabled mode owned no camera, allocated no render targets, and left the presenter disabled.
 - Corrected the settings and documentation to describe supersampling as an experimental filtered resolve. No unverified clarity benefit is claimed.
+- A visible DirectX 11 Core-plus-DLC audit exercised FSR at 50% and 77%, 125% filtered resolve, bilinear scaling, a live 2558x1341 to 1600x900 resize, external-camera fallback and recovery, and 30 repeated live mode changes. Disabling restored camera flags and left zero upscaler render textures; managed memory settled about 180 KB above the post-load baseline.
+- Paired native and FSR screenshots were valid, distinct game images with essentially unchanged sampled mean brightness (52.96 versus 52.95). This proves real presentation without a global brightness shift, not subjective image-quality superiority.
+- A focused Harmony plus Camera+ 3.4.7 run passed the same render, resize, fallback, stress, restoration, and resource-release assertions. Its post-load managed-memory delta was about 284 KB.
+- A 67-mod automated launch stalled before the upscaler initialized while reporting missing Geological Landforms types. It was stopped and is not counted as an upscaler pass or failure; an earlier normal user session with that list did present an upscaled frame.
+- Pinned release assembly metadata to 0.1.5 without a moving Git suffix. Two consecutive builds were byte-identical (SHA-256 35711D8DDC89FF0C908A5373EBDECD8C701C3D3E846A77056465E00D53F643E9), with zero warnings and zero errors.
 
 ## Pending
 
 - Interactive FSR/bilinear/native/supersampling visual comparison, including mouse alignment and blur assessment.
-- Water, color correction, resize, scene transitions and Camera+ interaction.
+- Water, weather, color correction, planet/map transitions, and fullscreen/window changes.
 - Performance measurements. No FPS/TPS improvement has been established.
 
 For a broader isolated test, the active mod list and a copy of the latest save were loaded through a temporary smoke-test helper. Loading reached HugsLib's `OnMapLoaded`, but the hidden automated launch then encountered GUI initialization errors in RimHUD/HugsLib/Verse.Text before a stable rendered frame. No upscaler code appeared in those exception stacks. The helper was removed, the original save was never changed, and no visual pass is claimed from that run. The normal mod list now contains the upscaler by user request, while its rendering setting still defaults to disabled.
